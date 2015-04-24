@@ -18,7 +18,6 @@ from DIRAC import S_OK, S_ERROR, gConfig
 
 import sys
 sys.path.append('/usr/lib64/python2.6/site-packages')
-import arc
 
 # List of files to be inserted/retrieved into/from pilot Output Sandbox
 # first will be defined as StdOut in JDL and the second as StdErr
@@ -79,6 +78,10 @@ def getCREAMPilotOutput( proxy, pilotRef, pilotStamp ):
   return result
 
 def getARCPilotOutput( proxy, pilotRef ):
+  try :
+    import arc
+  except :
+    return S_ERROR( "ARC api not available. Sorry." )
   tmp_dir = mkdtemp()
   myce = pilotRef.split(":")[1].strip("/")
   gridEnv = getGridEnv()
