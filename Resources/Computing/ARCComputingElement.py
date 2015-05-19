@@ -251,15 +251,15 @@ class ARCComputingElement( ComputingElement ):
     if not stamp:
       return S_ERROR( 'Pilot stamp not defined for %s' % pilotRef )
 
-    # usercfg = arc.UserConfig()
-    # usercfg.CredentialString(proxy)
-    # job = arc.Job()
-    # job.jobID = os.path.basename(pilotRef)
-    # job.JobStatusURL = arc.URL(cfgPath("ldap://", self.ceHost, ":2135/Mds-Vo-Name=local,o=grid??sub?(nordugrid-job-globalid=", job.JobID, ")"))
-    # job.JobManagementURL = arc.URL(cfgPath("gsiftp://", self.ceHost, ":2811/jobs/"))
-    # job.JobManagementInterfaceName = "org.nordugrid.gridftpjob"
+    usercfg = arc.UserConfig()
+    usercfg.CredentialString(self.proxy)
+    job = arc.Job()
+    job.jobID = os.path.basename(pilotRef)
+    job.JobStatusURL = arc.URL(cfgPath("ldap://", self.ceHost, ":2135/Mds-Vo-Name=local,o=grid??sub?(nordugrid-job-globalid=", job.JobID, ")"))
+    job.JobManagementURL = arc.URL(cfgPath("gsiftp://", self.ceHost, ":2811/jobs/"))
+    job.JobManagementInterfaceName = "org.nordugrid.gridftpjob"
 
-    arcID = os.path.basename(pilotRef)
+    # arcID = os.path.basename(pilotRef)
     if "WorkingDirectory" in self.ceParameters:    
       workingDirectory = os.path.join( self.ceParameters['WorkingDirectory'], arcID )
     else:
@@ -267,8 +267,9 @@ class ARCComputingElement( ComputingElement ):
     outFileName = os.path.join( workingDirectory, '%s.out' % stamp )
     errFileName = os.path.join( workingDirectory, '%s.err' % stamp )
 
-    cmd = ['arcget', '-j', self.ceParameters['JobListFile'], pilotRef ]
-    result = executeGridCommand( self.proxy, cmd, self.gridEnv )
+    job.Retrieve(usercfg, arc.URL("./"), False) 
+    #cmd = ['arcget', '-j', self.ceParameters['JobListFile'], pilotRef ]
+    #result = executeGridCommand( self.proxy, cmd, self.gridEnv )
     output = ''
     if result['OK']:
       if not result['Value'][0]:
